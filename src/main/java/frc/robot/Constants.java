@@ -28,8 +28,8 @@ public final class Constants {
         public static final double ksVolts = 0.198;   //0.169
         public static final double kvVoltSecondsPerMeter = 2.86;  //2.24\
         public static final double kaVoltSecondsSquaredPerMeter = 0.365;  //0.0435
-        public static final double kPDriveVel = 0.5;  //2.4 8/14 2.24 Tuning to get better PIDF response
-        public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(10);  
+        public static final double kPDriveVel = 0.025;  //2.4 8/14 2.24 Tuning to get better PIDF response
+        public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(8);  
         public static final int kSlotDriveLeftPID = 0;
         public static final int kSlotDriveRightPID = 0;
 

@@ -56,7 +56,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_rightLead.setIdleMode(IdleMode.kBrake);
     m_rightLead.setSmartCurrentLimit(40, 60);
     m_rightLead.setInverted(true);
-    m_rightFollow.follow(m_leftLead);
+    m_rightFollow.follow(m_rightLead);
     m_rightEncoder = m_rightLead.getEncoder();
     m_rightEncoder.setPositionConversionFactor(DriveConstants.kDistanceMetersPerEncoderUnits);
     m_rightEncoder.setVelocityConversionFactor(DriveConstants.kVelocityMetersPerSecondPerEncoderUnits);
@@ -67,14 +67,16 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Tank drive with Spark Max PID using WPILib feedforward
    * 
-   * @param leftSpeed Drive speed setpoint for left side meters per second (max = ~3 m/s)
-   * @param rightSpeed Drive speed setpoint for right side meters per second
+   * @param leftVelocity Drive velocity setpoint for left side meters per second (max = ~3 m/s)
+   * @param rightVelocity Drive velocity setpoint for right side meters per second
    */
-  public void tankDriveClosedLoop(double leftSpeed, double rightSpeed) {
-    m_pidLeft.setReference(leftSpeed, ControlType.kVelocity, 
-                           DriveConstants.kSlotDriveLeftPID, m_leftfeedforward.calculate(leftSpeed));
-    m_pidRight.setReference(rightSpeed, ControlType.kVelocity, 
-                            DriveConstants.kSlotDriveRightPID, m_rightfeedforward.calculate(rightSpeed));
+  public void tankDriveClosedLoop(double leftVelocity, double rightVelocity) {
+    leftVelocity = DriveConstants.kMaxSpeedMetersPerSecond*leftVelocity;
+    rightVelocity = DriveConstants.kMaxSpeedMetersPerSecond*rightVelocity;
+    m_pidLeft.setReference(leftVelocity, ControlType.kVelocity, 
+                           DriveConstants.kSlotDriveLeftPID, m_leftfeedforward.calculate(leftVelocity));
+    m_pidRight.setReference(rightVelocity, ControlType.kVelocity, 
+                            DriveConstants.kSlotDriveRightPID, m_rightfeedforward.calculate(rightVelocity));
   }
 
   /**
@@ -84,8 +86,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void arcadeDriveClosedLoop(double xSpeed, double zRotation) {
     var speeds = DriveUtil.arcadeDriveIK(DriveUtil.applyDeadband(xSpeed, 0.05), DriveUtil.applyDeadband(zRotation, 0.05), true);
-    tankDriveClosedLoop(DriveConstants.kMaxSpeedMetersPerSecond*speeds.left, 
-                        DriveConstants.kMaxSpeedMetersPerSecond*speeds.right);
+    tankDriveClosedLoop(speeds.left, speeds.right);
   }
 
    /**
